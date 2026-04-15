@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <video autoplay muted loop id="bg-video">
+    <video autoplay muted loop playsinline webkit-playsinline preload="auto" id="bg-video">
         <source src="background.mp4" type="video/mp4">
     </video>
 
@@ -34,5 +34,23 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        const v = document.getElementById('bg-video');
+        if (v) {
+            // Handle browsers that might block or suspend autoplay
+            const playVideo = () => v.play().catch(e => console.log('Autoplay blocked:', e));
+            
+            playVideo();
+            
+            // Re-attempt play on first interaction if blocked
+            window.addEventListener('click', playVideo, { once: true });
+            window.addEventListener('touchstart', playVideo, { once: true });
+            
+            // Watch for suspension/stalling
+            v.addEventListener('stalled', () => v.load());
+            v.addEventListener('suspend', () => v.play());
+        }
+    </script>
 </body>
 </html>
